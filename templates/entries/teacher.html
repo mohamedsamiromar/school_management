@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+     <h2>Teacher</h2>
+<form method="post" action="/teacher">
+        {% csrf_token %}
+
+
+    {% if active_teacher %}
+        <input type="hidden" name="id" value="{{ active_teacher.id }}">
+    {% endif %}
+
+    <table>
+        <tr>
+            <td>Name</td>
+            <td><input name="name" type="text" value="{{ active_teacher.name }}"></td>
+        </tr>
+        <tr>
+            <td>Salary</td>
+            <td><input name="salary" type="number" value="{{ active_teacher.salary }}"></td>
+        </tr>
+        <tr>
+            <td>Address1</td>
+            <td><input name="address1" type="text" value="{{ active_teacher.address1}}"></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="save " ></td>
+        </tr>
+    </table>
+</form>
+<table border="2">
+    <tr>
+        <td>Name</td>
+        <td>Salary</td>
+        <td>Adress1</td>
+    </tr>
+    {% for teacher in teachers %}
+    <tr>
+    <td>{{ teacher.name }}</td>
+    <td>{{ teacher.salary }}</td>
+    <td>{{ teacher.address1 }}</td>
+    <td><a href="/teacher?teacher_id={{ teacher.id }}">Edit</a></td>
+    </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+         <style>
+        .alert{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2>Subject</h2>
+
+{% if form %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert">
+                    <strong>{{ field.name }} - {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+<form action="/subject" method="post">
+        {% csrf_token %}
+
+    {% if active_subject %}
+        <input type="hidden" name="id" value="{{ active_subject.id }}">
+    {% endif %}
+
+    <table>
+        <tr>
+            <td>Subject Name</td>
+            <td><input type="text" name="subject_name" value="{{ active_subject.subject_name }}"></td>
+        </tr>
+        <tr>
+            <td>Max Grad</td>
+            <td><input type="number" name="max_grade" value="{{ active_subject.max_grade }}"></td>
+        </tr>
+        <tr>
+            <td><input value="save" type="submit"></td>
+        </tr>
+    </table>
+</form>
+
+<table border="1">
+    <tr>
+        <td>Subject Name</td>
+        <td>Max Grade</td>
+        <td>Edit</td>
+    </tr>
+
+    {% for subject in subjects %}
+        <tr>
+        <td>{{ subject.subject_name }}</td>
+        <td>{{ subject.max_grade }}</td>
+        <td><a href="/subject?subject_id={{ subject.id }}">Edit</a></td>
+
+        </tr>
+    {% endfor %}
+</table>
+
+
+
+
+</body>
+</html>

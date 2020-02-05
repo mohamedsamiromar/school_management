@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .alert{
+            color: red;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Student</title>
+</head>
+<body>
+
+{% if form %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert">
+                    <strong>{{ field.name }} - {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+<h2>Student</h2>
+
+{% comment %}{{active_student|yesno:"put,post"}}{% endcomment %}
+<form method="post"  action="/student">
+    {% csrf_token %}
+
+    {% if active_student %}
+        <input type="hidden" name="id" value="{{ active_student.id }}">
+    {% endif %}
+
+<table>
+    <tr>
+        <td>Name</td>
+        <td><input type="text" name="name" value="{{ active_student.name }}"></td>
+    </tr>
+    <tr>
+        <td>Study Year</td>
+        <td><input type="text" name="study_year" value="{{ active_student.study_year }}"></td>
+    </tr>
+    <tr>
+        <td>Birthday< /td>
+        <td><input type="date" name="birthday" value="{{ active_student.birthday }}"></td>
+    </tr>
+    <tr>
+        <td>Class Name</td>
+        <td><input name="class_name" type="text" value="{{ active_student.student_class }}"></td>
+    </tr>
+    <tr>
+        <td><input type="submit" value="save"></td>
+    </tr>
+</table>
+<table border="1">
+    <tr>
+        <td>Name</td>
+        <td>Study Year</td>
+        <td>Birthday</td>
+        <td>Student Class</td>
+    </tr>
+    {% for student in students %}
+        <tr>
+        <td>{{ student.name }}</td>
+        <td>{{ student.study_year }}</td>
+        <td>{{ student.birthday }}</td>
+        <td>{{ student.student_class }}</td>
+            <td><a href="/student?student_id={{ student.id }}">Edit</a></td>
+
+        </tr>
+    {% endfor %}
+</form>
+</body>
+</html>

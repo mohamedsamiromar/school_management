@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+        <style>
+        .alert{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+{% if form %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert">
+                    <strong>{{ field.name }} - {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+<form method="post" action="/relation">
+    {% csrf_token %}
+
+    {% if active_subject_relation %}
+        <input type="hidden" name="id" value="{{ active_subject_relation.id }}">
+    {% endif %}
+
+    <h2>Subject</h2>
+    <table>
+        <tr>
+            <td>Student Name</td>
+            <td><input type="text" name="student_name" value="{{ active_subject_relation.student.name }}"></td>
+        </tr>
+        <tr>
+            <td>Teacher</td>
+            <td><input name="teacher_name" type="text" value="{{ active_subject_relation.teacher.name }}"></td>
+        </tr>
+        <tr>
+            <td>Subject</td>
+            <td><input name="subject_name" type="text" value="{{ active_subject_relation.subject.subject_name }}"></td>
+        </tr>
+        <tr>
+            <td>Take Exam</td>
+            <td><input name="take_exam" type="number" value="{{ active_subject_relation.take_exam }}"></td>
+        </tr>
+        <tr>
+            <td>Grade</td>
+            <td><input name="grade" type="number" value="{{ active_subject_relation.grade }}"></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="save"></td>
+        </tr>
+    </table>
+
+</form>
+
+<table border="2">
+    <tr>
+        <td>Student Name</td>
+        <td>Teacher Name</td>
+        <td>Subject Name</td>
+        <td>Take Exam</td>
+        <td>Grade</td>
+    </tr>
+    {% for subject in subjects %}
+     <tr>
+      <td>{{ subject.subject.subject_name }}</td>
+     <td>{{ subject.teacher.name }}</td>
+     <td>{{ subject.student.name }}</td>
+     <td>{{ subject.take_exam }}</td>
+     <td>{{ subject.grade }}</td>
+     <td><a href="/relation?rel_id={{ subject.id }}">Edit</a></td>
+    </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>

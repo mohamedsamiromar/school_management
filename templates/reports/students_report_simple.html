@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<h2>Report</h2>
+<form action="/report/students/simple">
+<table border="0">
+    <tr>
+        <td>Class Name</td>
+        <td><input name="class_name" type="text" value="{{ class_name }}"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><input type="submit" value="search"></td>
+    </tr>
+
+</table>
+</form>
+
+
+<table border="1">
+    <tr>
+        <th>Student Name</th>
+        <th>class name</th>
+    </tr>
+
+
+    {% for student in students %}
+        <tr>
+            <td>{{ student.name}}</td>
+            <td>{{ student.student_class.name}}</td>
+        </tr>
+    {% endfor %}
+
+</table>
+
+
+</body>
+</html>

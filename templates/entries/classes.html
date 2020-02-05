@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <style>
+        .alert{
+            color: red;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+{% if form %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert">
+                    <strong>{{ field.name }} - {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+       <h2>Classes</h2>
+
+<form method="post" action="/school/classes">
+        {% csrf_token %}
+<table>
+    <tr>
+        <td>Name</td>
+        <td><input name="name" type="text" value="{{ active_class.name }}"></td>
+    </tr>
+    <tr>
+        <td>Floor Index</td>
+        <td><input name="floor_index" type="number" value="{{ active_class.floor_index }}"></td>
+    </tr>
+    <tr>
+        <td><input type="submit" value="save"></td>
+    </tr>
+</table>
+</form>
+
+
+        {% csrf_token %}
+
+{% if active_class %}
+        <input type="hidden" name="id" value="{{ active_class.id }}">
+    {% endif %}
+<table border="2">
+    <tr>
+        <td>Name</td>
+        <td>Floor Index</td>
+    </tr>
+    {% for classes_form in classes %}
+        <tr>
+        <td>{{ classes_form.name }}</td>
+        <td>{{ classes_form.floor_index }}</td>
+        <td><a href="/classes?classes_id={{ classes.id }}">Edit</a></td>
+        </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>

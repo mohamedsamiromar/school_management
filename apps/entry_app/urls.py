@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.school_app import views
+from apps.entry_app import views
 
 urlpatterns = [
     path('student', views.student, name='student'),

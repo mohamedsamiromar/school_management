@@ -1,8 +1,6 @@
-from django.db.models import Sum
 from django.shortcuts import render
-
-from apps.school_app.form import StudentForm, TeacherForm, ClassesForm, SubjectForm, SubjectRelationForm
-from apps.school_app.models import Student, Subject, Classes, Teacher, SubjectRelation
+from apps.entry_app.form import StudentForm, TeacherForm, ClassesForm, SubjectForm, SubjectRelationForm
+from apps.entry_app.models import Student, Subject, Classes, Teacher, SubjectRelation
 
 
 def student(request):

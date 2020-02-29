@@ -28,13 +28,13 @@
     {% endif %}
 {% endif %}
 
-<form method="post" action="/relation">
+<form method="post" action="entry/relation">
     {% csrf_token %}
 
     {% if active_subject_relation %}
         <input type="hidden" name="id" value="{{ active_subject_relation.id }}">
     {% endif %}
-
+<a href="/"><h2>Back</h2></a>
     <h2>Subject</h2>
     <table>
         <tr>

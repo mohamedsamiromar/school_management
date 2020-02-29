@@ -1,9 +1,10 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import render
-
 # Create your views here.
 from apps.entry_app.models import Student, SubjectRelation
 
+@login_required
 
 def simple_report(request):
     class_name = request.GET.get('class_name', '')

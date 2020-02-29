@@ -9,6 +9,7 @@
     </style>
 </head>
 <body>
+<a href="/">Back</a>
 <h2>Subject</h2>
 
 {% if form %}
@@ -28,7 +29,7 @@
     {% endif %}
 {% endif %}
 
-<form action="/subject" method="post">
+<form action="entry/subject" method="post">
         {% csrf_token %}
 
     {% if active_subject %}

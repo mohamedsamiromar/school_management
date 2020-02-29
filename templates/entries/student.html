@@ -27,11 +27,11 @@
         {% endfor %}
     {% endif %}
 {% endif %}
-
+<a href="/"><h2>Back</h2></a>
 <h2>Student</h2>
 
 {% comment %}{{active_student|yesno:"put,post"}}{% endcomment %}
-<form method="post"  action="/student">
+<form method="post"  action="entry/student">
     {% csrf_token %}
 
     {% if active_student %}

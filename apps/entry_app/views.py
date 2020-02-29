@@ -1,8 +1,10 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from apps.entry_app.form import StudentForm, TeacherForm, ClassesForm, SubjectForm, SubjectRelationForm
 from apps.entry_app.models import Student, Subject, Classes, Teacher, SubjectRelation
 
 
+@login_required
 def student(request):
     if request.method == 'GET':
         model = {}
@@ -160,7 +162,4 @@ def classes(request):
                 classes_form.save()
                 classes = Classes.objects.all()
                 return render(request, 'entries/classes.html', {'form': classes_form, 'classess': classes})
-
-
-
 

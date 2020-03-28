@@ -1,11 +1,18 @@
-from django.contrib.auth.decorators import login_required
+from urllib import request
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.shortcuts import render
-from apps.entry_app.form import StudentForm, TeacherForm, ClassesForm, SubjectForm, SubjectRelationForm
-from apps.entry_app.models import Student, Subject, Classes, Teacher, SubjectRelation
+
+from apps.authentication import permission_roles
+from apps.entry_app.form import StudentForm, TeacherForm, ClassesForm, SubjectForm, TeacherClassSubjectForm, \
+    StudentTcsForm
+from apps.entry_app.models import Student, Subject, Classes, Teacher, TeacherClassSubject, StudentTcs
 
 
-@login_required
+@user_passes_test(permission_roles.is_teacher)
 def student(request):
+    profile = request.user.profile
     if request.method == 'GET':
         model = {}
         model['students'] = Student.objects.all()
@@ -45,7 +52,7 @@ def student(request):
     #         student_form.save()
     #     return render(request, 'student.html', {'form': student_form, 'students': student})
 
-
+@user_passes_test(permission_roles.is_teacher)
 def subject(request):
     if request.method == 'GET':
         model = {}
@@ -71,42 +78,7 @@ def subject(request):
             return render(request, 'entries/subject.html', {'form': subject_form, 'subjects': subjects})
 
 
-def subject_relation(request):
-    if request.method == 'GET':
-        model = {}
-        model['subjects'] = SubjectRelation.objects.all()
-        if 'rel_id' in request.GET:
-            rel_id = request.GET.get("rel_id")
-            relation = SubjectRelation.objects.get(pk=rel_id)
-            model['active_subject_relation'] = relation
-        return render(request, 'entries/subjectrelation.html', model)
-
-    elif request.method == 'POST':
-        rel_form = SubjectRelationForm(request.POST)
-        if 'id' in request.POST:
-            id = request.POST.get('id')
-            relation = SubjectRelation.objects.get(pk=id)
-            rel_form = SubjectRelationForm(request.POST, instance=relation)
-
-        if rel_form.is_valid():
-            rel = rel_form.save(commit=False)
-
-            teacher_name = rel_form.cleaned_data['teacher_name']
-            rel.teacher = Teacher.objects.filter(name=teacher_name).first()
-
-            student_name = rel_form.cleaned_data['student_name']
-            rel.student = Student.objects.filter(name=student_name).first()
-
-            subject_name = rel_form.cleaned_data['subject_name']
-            rel.subject = Subject.objects.filter(subject_name=subject_name).first()
-
-            rel.save()
-
-
-        subjects = SubjectRelation.objects.all()
-        return render(request, 'entries/subjectrelation.html', {'form': rel_form, 'subjects': subjects})
-
-
+@user_passes_test(permission_roles.is_manager)
 def teacher(request):
     if request.method == 'GET':
         model = {}
@@ -131,8 +103,15 @@ def teacher(request):
         else:
             teacher_form = TeacherForm(request.POST)
             if teacher_form.is_valid():
-                teacher_form.save()
+                teacher = teacher_form.save()
                 teachers = Teacher.objects.all()
+                user = User()
+                user.first_name = teacher.name
+                user.username = teacher_form.cleaned_data['user_name']
+                user.set_password(teacher_form.cleaned_data['password'])
+                user.save()
+                user.profile.is_teacher = True
+                user.save()
                 return render(request, 'entries/teacher.html', {'form': teacher_form, 'teachers': teachers})
 
 
@@ -163,3 +142,98 @@ def classes(request):
                 classes = Classes.objects.all()
                 return render(request, 'entries/classes.html', {'form': classes_form, 'classess': classes})
 
+
+@user_passes_test(permission_roles.is_manager)
+def teacher_subject_relation(request):
+
+    if request.method == 'GET':
+        data = TeacherClassSubject.objects.all()
+        return render(request, 'entries/teacher_class_subject.html', {'tcss': data})
+    elif request.method == 'POST':
+        rel_form = TeacherClassSubjectForm(request.POST)
+        if 'id' in request.POST:
+            id = request.POST.get('id')
+            relation = TeacherClassSubject.objects.get(pk=id)
+            rel_form = TeacherClassSubjectForm(request.POST, instance=relation)
+
+        if rel_form.is_valid():
+            rel = rel_form.save(commit=False)
+
+            teacher_name = rel_form.cleaned_data['teacher_name']
+            rel.teacher = Teacher.objects.filter(name=teacher_name).first()
+
+            class_name = rel_form.cleaned_data['class_name']
+            rel.classes = Classes.objects.filter(name=class_name).first()
+
+            subject_name = rel_form.cleaned_data['subject_name']
+            rel.subject = Subject.objects.filter(subject_name=subject_name).first()
+
+            rel.save()
+
+        return render(request, 'entries/teacher_class_subject.html', {'tcss': TeacherClassSubject.objects.all()})
+
+
+def student_degree_subject(request):
+    if request.method =='GET':
+        data = StudentTcs.objects.all()
+        return render(request, 'entries/StudentTcs.html', {'stss': data})
+    elif request.method =='POST':
+        student_tcs_form = StudentTcsForm(request.POST)
+        if 'id' in request.POST:
+            id = request.POST.get('id')
+            relation = StudentTcs.objects.get(pk=id)
+            student_tcs_form = StudentTcsForm(request.POST, instance=relation)
+
+        if student_tcs_form.is_valid():
+            student_tcs = student_tcs_form.save(commit=False)
+
+            student_name = student_tcs_form.cleaned_data['student_name']
+            student_tcs.student = Student.objects.filter(name=student_name).first()
+
+            subject_name = student_tcs_form.cleaned_data['subject_name']
+            class_name = student_tcs_form.cleaned_data['class_name']
+            teacher_name = student_tcs_form.cleaned_data['teacher_name']
+
+            tcs = TeacherClassSubject.objects.filter(teacher__name=teacher_name, classes__name=class_name, subject__subject_name=subject_name).first()
+
+            student_tcs.tcs = tcs
+            student_tcs.save()
+
+        return render(request, 'entries/StudentTcs.html', {'stss': StudentTcs.objects.all(), 'form': student_tcs_form})
+
+
+
+# def subject_relation(request):
+#     if request.method == 'GET':
+#         model = {}
+#         model['subjects'] = SubjectRelation.objects.all()
+#         if 'rel_id' in request.GET:
+#             rel_id = request.GET.get("rel_id")
+#             relation = SubjectRelation.objects.get(pk=rel_id)
+#             model['active_subject_relation'] = relation
+#         return render(request, 'entries/subjectrelation.html', model)
+#
+#     elif request.method == 'POST':
+#         rel_form = SubjectRelationForm(request.POST)
+#         if 'id' in request.POST:
+#             id = request.POST.get('id');
+#             relation = SubjectRelation.objects.get(pk=id)
+#             rel_form = SubjectRelationForm(request.POST, instance=relation)
+#
+#         if rel_form.is_valid():
+#             rel = rel_form.save(commit=False)
+#
+#             teacher_name = rel_form.cleaned_data['teacher_name']
+#             rel.teacher = Teacher.objects.filter(name=teacher_name).first()
+#
+#             student_name = rel_form.cleaned_data['student_name']
+#             rel.student = Student.objects.filter(name=student_name).first()
+#
+#             subject_name = rel_form.cleaned_data['subject_name']
+#             rel.subject = Subject.objects.filter(subject_name=subject_name).first()
+#
+#             rel.save()
+#
+#
+#         subjects = SubjectRelation.objects.all()
+#         return render(request, 'entries/subjectrelation.html', {'form': rel_form, 'subjects': subjects})

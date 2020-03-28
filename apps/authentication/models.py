@@ -10,6 +10,9 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     brith_date = models.DateField(null=True, blank=True)
+    is_teacher = models.BooleanField(default=False)
+    is_student = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
 
 
 @receiver(post_save, sender=User)

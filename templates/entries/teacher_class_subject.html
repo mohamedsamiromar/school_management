@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>T.C.S</title>
+     <style>
+        .alert{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+{% if form %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert">
+                    <strong>{{ field.name }} - {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+<form method="post" action="/entry/tcs">
+        {% csrf_token %}
+
+    <table>
+        <tr>
+            <td>Teacher</td>
+            <td><input type="text" name="teacher_name"></td>
+        </tr>
+        <tr>
+            <td>Class</td>
+            <td><input type="text" name="class_name"></td>
+        </tr>
+        <tr>
+            <td>Subject</td>
+            <td><input name="subject_name" type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="submit" name="Save"></td>
+        </tr>
+    </table>
+</form>
+<table border="2">
+    <tr>
+        <td>Teacher</td>
+        <td>Class</td>
+        <td>Subject</td>
+    </tr>
+
+        {% for tcs in tcss %}
+            <tr>
+                <td>{{ tcs.teacher.name }}</td>
+                <td>{{ tcs.classes.name }}</td>
+                <td>{{ tcs.subject.subject_name }}</td>
+            </tr>
+        {% endfor %}
+
+</table>
+
+</body>
+</html>

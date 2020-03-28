@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .alert{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+{% if form %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert">
+                    <strong>{{ field.name }} - {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+
+
+<form method="post" action="/entry/sts">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td>Student Name</td>
+            <td><input name="student_name" type="text"></td>
+        </tr>
+        <tr>
+            <td>Subject Name</td>
+            <td><input name="subject_name" type="text"></td>
+        </tr>
+        <tr>
+            <td>Teacher Name</td>
+            <td><input type="text" name="teacher_name"></td>
+        </tr>
+        <tr>
+            <td>Calss Name</td>
+            <td><input type="text" name="class_name"></td>
+        </tr>
+        <tr>
+            <td>Grade</td>
+            <td><input type="number" name="grade"></td>
+        </tr>
+        <tr><td><input type="submit" name="Save"></td></tr>
+    </table>
+</form>
+
+<table border="2">
+    <tr>
+        <td>Student Name</td>
+        <td>Class Name</td>
+        <td>Subject Name</td>
+        <td>Grade</td>
+    </tr>
+
+    {% for stc in stss %}
+        <td>{{ stc.student.name }}</td>
+        <td>{{ stc.tcs.classes.name }}</td>
+        <td>{{ stc.tcs.subject.subject_name }}</td>
+        <td>{{ stc.grade }}</td>
+    {% endfor %}
+</table>
+</body>
+</html>

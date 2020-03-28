@@ -5,9 +5,6 @@ from django.shortcuts import render, redirect
 from apps.authentication.forms import SignUpForm
 
 
-@login_required
-
-
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)

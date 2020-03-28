@@ -7,7 +7,7 @@
 <body>
 <a href="/"><h2>Back</h2></a>
      <h2>Teacher</h2>
-<form method="post" action="entry/teacher">
+<form method="post" action="/entry/teacher">
         {% csrf_token %}
 
 
@@ -27,6 +27,14 @@
         <tr>
             <td>Address1</td>
             <td><input name="address1" type="text" value="{{ active_teacher.address1}}"></td>
+        </tr>
+        <tr>
+            <td>User Name</td>
+            <td><input name="user_name" type="text"></td>
+        </tr>
+        <tr>
+            <td>Password</td>
+            <td><input name="password" type="text"></td>
         </tr>
         <tr>
             <td><input type="submit" value="save " ></td>
